@@ -19,7 +19,7 @@ end
 ## Usage
 
 Run two functions in parallel. `results` will be a map of keys and results.
-```
+```elixir
 results = ParallelTask.new
           # Add some long running tasks eg. API calls
           |> ParallelTask.add(first_task: fn -> "Result from first task" end)
@@ -28,7 +28,7 @@ results = ParallelTask.new
 ```
 
 Use pattern matching to easily extract the results.
-```
+```elixir
 %{
   first_task: first_result,
   second_task: second_result
