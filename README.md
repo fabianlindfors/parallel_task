@@ -4,6 +4,8 @@ Elixir library to run multiple functions in parallel and capture their results.
 
 Suitable for multiple slow tasks such as API calls and database queries which can be performed concurrently. The process will be blocked until all functions have returned or the timeout has been reached.
 
+Full documentation available on [hexdocs](https://hexdocs.pm/parallel_task/ParallelTask.html).
+
 ## Installation
 
 The package can be installed by adding `parallel_task` to your list of dependencies in `mix.exs`:
@@ -29,7 +31,7 @@ Use pattern matching to easily extract the results.
 ```
 %{
   first_task: first_result,
-  second_task
+  second_task: second_result
 } = results
 
 IO.puts first_result # "Result from first task"
@@ -38,4 +40,4 @@ IO.puts second_result # "Result from second task"
 
 ## License
 
-ParallelTask is licensed under MIT.
+Licensed under MIT.
