@@ -1,6 +1,6 @@
 defmodule ParallelTask do
   @moduledoc """
-  Elixir library to run multiple functions in parallel and capture their results.
+  Elixir library to run multiple functions in parallel and capture the results.
 
   Suitable for multiple slow tasks such as API calls and database queries which can be performed concurrently. The process will be blocked until all functions have returned or the timeout has been reached.
 
