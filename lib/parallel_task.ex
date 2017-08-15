@@ -42,14 +42,9 @@ defmodule ParallelTask do
       |> ParallelTask.add(first: fn -> "First function" end)
       |> ParallelTask.add(second: fn -> "Second function" end)
   """
-  def add(%__MODULE__{} = object, new_functions \\ []) do
-    %__MODULE__{
-      task_functions: Map.merge(
-        object.task_functions,
-        Enum.into(new_functions, %{})
-      )
-    }
   def add(%__MODULE__{} = object, key, function), do: add(object, [{key, function}])
+  def add(%__MODULE__{task_functions: task_functions} = object, new_functions \\ []) do
+    %{object | task_functions: Enum.into(new_functions, task_functions)}
   end
 
 
@@ -66,25 +61,33 @@ defmodule ParallelTask do
         first: "Hello world"
       }
   """
-  def perform(%__MODULE__{} = object, timeout \\ 5000) do
-    tasks = Enum.map(Map.values(object.task_functions), &Task.async/1)
+  def perform(%__MODULE__{task_functions: task_functions}, timeout \\ 5000) do
 
-    tasks_with_results = Task.yield_many(tasks, timeout)
+    # Map functions to Elixir Tasks
+    {keys, tasks} =
+      task_functions
+      |> Enum.map(fn {k, f} -> {k, Task.async(f)} end)
+      |> Enum.unzip()
 
-    task_results = Enum.map(tasks_with_results, fn {task, res} ->
-      # Shutdown the tasks that did not reply nor exit
+    # Helper function to extract results from a Task
+    get_task_results = fn {task, res} ->
+      # Shutdown the task if it did not reply nor exit
       case res || Task.shutdown(task, :brutal_kill) do
         {:ok, results} -> results
         _ -> nil
       end
-    end)
+    end
 
-    # Create map with function keys and the task results
-    Enum.reduce(Enum.with_index(object.task_functions),
-                %{},
-                fn {{key, _}, i}, results ->
-      Map.put(results, key, Enum.at(task_results, i))
-    end)
+    # Get task results (and kill any tasks exceding the timeout)
+    task_results =
+      tasks
+      |> Task.yield_many(timeout)
+      |> Enum.map(get_task_results)
+
+    # Combine keys with the task results and return as map
+    keys
+    |> Enum.zip(task_results)
+    |> Map.new()
 
   end
 
