@@ -3,7 +3,7 @@ defmodule ParallelTask.Mixfile do
 
   def project do
     [app: :parallel_task,
-     version: "0.1.0",
+     version: "0.1.1",
      elixir: "~> 1.0",
      description: "Run multiple functions in parallel and capture the results",
      build_embedded: Mix.env == :prod,
