@@ -8,6 +8,12 @@ defmodule ParallelTaskTest do
     assert %{simple: "Testing"} == results
   end
 
+  test "alternative syntax" do
+    results = ParallelTask.new |> ParallelTask.add(:simple, fn -> "Testing" end) |> ParallelTask.perform
+
+    assert %{simple: "Testing"} == results
+  end
+
   test "multiple tasks" do
     results = ParallelTask.new
               |> ParallelTask.add(first: fn -> 1 end, second: fn -> 2 end)

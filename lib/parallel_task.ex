@@ -49,6 +49,7 @@ defmodule ParallelTask do
         Enum.into(new_functions, %{})
       )
     }
+  def add(%__MODULE__{} = object, key, function), do: add(object, [{key, function}])
   end
 
 
